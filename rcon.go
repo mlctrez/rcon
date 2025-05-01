@@ -50,10 +50,6 @@ const (
 	// SERVERDATA_EXECCOMMAND packet type represents a command issued to the server
 	// by a client. The response will vary depending on the command issued.
 	SERVERDATA_EXECCOMMAND int32 = 2
-
-	//// SERVERDATA_EXECCOMMAND_ID is any positive integer, chosen by the client
-	//// (will be mirrored back in the server's response).
-	//SERVERDATA_EXECCOMMAND_ID int32 = 0
 )
 
 var (
