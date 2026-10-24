@@ -21,6 +21,9 @@ const (
 	// large queries.
 	DefaultMaxCommandLen = 1000
 
+	// DefaultExeCommandId is the default command id when one is not specified in the settings.
+	DefaultExeCommandId int32 = 0
+
 	// SERVERDATA_AUTH is the first packet sent by the client,
 	// which is used to authenticate the conn with the server.
 	SERVERDATA_AUTH int32 = 3
@@ -47,10 +50,6 @@ const (
 	// SERVERDATA_EXECCOMMAND packet type represents a command issued to the server
 	// by a client. The response will vary depending on the command issued.
 	SERVERDATA_EXECCOMMAND int32 = 2
-
-	// SERVERDATA_EXECCOMMAND_ID is any positive integer, chosen by the client
-	// (will be mirrored back in the server's response).
-	SERVERDATA_EXECCOMMAND_ID int32 = 0
 )
 
 var (
@@ -152,7 +151,7 @@ func (c *Conn) Execute(command string) (string, error) {
 		return "", ErrCommandTooLong
 	}
 
-	if err := c.write(SERVERDATA_EXECCOMMAND, SERVERDATA_EXECCOMMAND_ID, command); err != nil {
+	if err := c.write(SERVERDATA_EXECCOMMAND, c.settings.exeCommandId, command); err != nil {
 		return "", err
 	}
 
@@ -161,7 +160,7 @@ func (c *Conn) Execute(command string) (string, error) {
 		return response.Body(), err
 	}
 
-	if response.ID != SERVERDATA_EXECCOMMAND_ID {
+	if response.ID != c.settings.exeCommandId {
 		return response.Body(), ErrInvalidPacketID
 	}
 
@@ -287,7 +286,7 @@ func (c *Conn) read() (*Packet, error) {
 		// that command was received with packet.ID = -1, therefore, forcibly
 		// set packet.ID to SERVERDATA_EXECCOMMAND_ID.
 		if packet.ID == -1 {
-			packet.ID = SERVERDATA_EXECCOMMAND_ID
+			packet.ID = c.settings.exeCommandId
 		}
 	}
 

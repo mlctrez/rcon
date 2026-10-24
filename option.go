@@ -7,6 +7,7 @@ type Settings struct {
 	dialTimeout   time.Duration
 	deadline      time.Duration
 	maxCommandLen int
+	exeCommandId  int32
 }
 
 // DefaultSettings provides default deadline settings to Conn.
@@ -14,6 +15,7 @@ var DefaultSettings = Settings{
 	dialTimeout:   DefaultDialTimeout,
 	deadline:      DefaultDeadline,
 	maxCommandLen: DefaultMaxCommandLen,
+	exeCommandId:  DefaultExeCommandId,
 }
 
 // Option allows to inject settings to Settings.
@@ -37,5 +39,12 @@ func SetDeadline(timeout time.Duration) Option {
 func SetMaxCommandLen(maxCommandLen int) Option {
 	return func(s *Settings) {
 		s.maxCommandLen = maxCommandLen
+	}
+}
+
+// SetExeCommandId injects exeCommandId to Settings.
+func SetExeCommandId(exeCommandId int32) Option {
+	return func(s *Settings) {
+		s.exeCommandId = exeCommandId
 	}
 }
